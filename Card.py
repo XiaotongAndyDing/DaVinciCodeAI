@@ -10,6 +10,7 @@ class Card:
         self.published = published
         assert isinstance(original, bool)
         self.original_card = original
+        self.wrong_guess_history = set()
 
     def guess_number(self, number):
         if self.published:
@@ -17,6 +18,7 @@ class Card:
         if self.number == number:
             self.published = True
             return True
+        self.wrong_guess_history.add(number)
         return False
 
     def __eq__(self, other):
