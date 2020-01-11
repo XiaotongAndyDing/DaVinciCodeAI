@@ -33,3 +33,6 @@ class Card:
 
     def __hash__(self):
         return hash((self.color, self.number))
+
+    def card_str(self):
+        return ('B' if self.color == 'black' else 'W') + f"{self.number:02d}"

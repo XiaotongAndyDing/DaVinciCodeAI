@@ -49,3 +49,11 @@ class TestCard(TestCase):
         self.assertEqual(hand_sorted[1].number, 5)
         self.assertEqual(hand_sorted[2].color, 'white')
         self.assertEqual(hand_sorted[2].number, 10)
+
+    def test_print_card(self):
+        c = Card('white', 5)
+        self.assertEqual('W05', c.card_str())
+        c = Card('black', 5)
+        self.assertEqual('B05', c.card_str())
+        c = Card('black', 11)
+        self.assertEqual('B11', c.card_str())

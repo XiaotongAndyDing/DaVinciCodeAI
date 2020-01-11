@@ -48,31 +48,56 @@ class Game:
                                                                [self.each_player_guess_history,
                                                                 self.public_card_guess_history])
 
-                        if not self._next_player(player).is_guessed(card_index, number):
-                            if self.card_pool and player.num_of_card < Game.MAX_CARDS_HOLDING:
-                                new_card = self.card_pool.pop()
-                                new_card.published = True
-                                player.add_card(new_card)
-                        else:
-                            if self.card_pool and player.num_of_card < Game.MAX_CARDS_HOLDING:
-                                player.add_card(self.card_pool.pop())
+                        guess_result = self._next_player(player).is_guessed(card_index, number)
+                        if self.card_pool and player.num_of_card < Game.MAX_CARDS_HOLDING:
+                            """ if there some cards to take, we add one card to holding"""
+                            self._player_add_card(player, guess_result)
+                        if guess_result:
+                            """ if guess correctly, make one record"""
+                            player.guess_other_right()
+                        if player.num_of_card == Game.MAX_CARDS_HOLDING and guess_result:
+                            self._guess_all_players_multi_turns(player)
+
                     else:
                         player_index_guess, card_index, number = player.guess_all(self.public_view_list,
                                                                                   [self.each_player_guess_history,
                                                                                    self.public_card_guess_history])
-                        if not self.player_list[player_index_guess].is_guessed(card_index, number):
-                            if self.card_pool and player.num_of_card < Game.MAX_CARDS_HOLDING:
-                                new_card = self.card_pool.pop()
-                                new_card.published = True
-                                player.add_card(new_card)
-                        else:
-                            if self.card_pool and player.num_of_card < Game.MAX_CARDS_HOLDING:
-                                player.add_card(self.card_pool.pop())
+                        guess_result = self.player_list[player_index_guess].is_guessed(card_index, number)
+                        if self.card_pool and player.num_of_card < Game.MAX_CARDS_HOLDING:
+                            self._player_add_card(player, guess_result)
+                        if guess_result:
+                            player.guess_other_right()
+                        if player.num_of_card == Game.MAX_CARDS_HOLDING and guess_result:
+                            self._guess_all_players_multi_turns(player)
+
                     self._update_public_view()
                     self._update_each_player_guess_history()
                     self._update_public_card_guess_history()
 
         raise Exception('Max Turns')
+
+    def _guess_all_players_multi_turns(self, player):
+        if self._check_game_finish():
+            return
+        self._update_public_view()
+        self._update_each_player_guess_history()
+        self._update_public_card_guess_history()
+        """update has no side effect"""
+        player_index_guess, card_index, number = player.guess_all(self.public_view_list,
+                                                                  [self.each_player_guess_history,
+                                                                   self.public_card_guess_history])
+        guess_result_met = self.player_list[player_index_guess].is_guessed(card_index, number)
+        if guess_result_met:
+            player.guess_other_right()
+            self._guess_all_players_multi_turns(player)
+        else:
+            return
+
+    def _player_add_card(self, player, guess_result):
+        new_card = self.card_pool.pop()
+        new_card.published = not guess_result
+        """if guess right, no publishing. if guess wrong, we publish it"""
+        player.add_card(new_card)
 
     def _next_player_id(self, player):
         if player.name + 1 == self.num_of_player:
@@ -100,3 +125,9 @@ class Game:
 
     def _check_game_finish(self):
         return len(list(filter(lambda x: x.all_card_published, self.player_list))) == self.num_of_player - 1
+
+    def print_public_view(self):
+        print()
+        print('public view: ')
+        for player in self.player_list:
+            print(player.print_public_view_of_the_player())

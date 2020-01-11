@@ -107,3 +107,50 @@ class TestPlayer(TestCase):
 
         self.assertListEqual(available_list, [1])
         """0 cannot be choose, because it is self. 2 cannot be chosen because all cards have been published"""
+
+    def test_print_public_view_of_the_player(self):
+        p = Player(0)
+        p.add_card(Card('white', 10))
+        p.add_card(Card('black', 5))
+        p.add_card(Card('white', 5))
+        p.add_card(Card('black', 11))
+        p.add_card(Card('white', 2))
+
+        s = p.print_public_view_of_the_player()
+        self.assertEqual('Player 0: ???, ???, ???, ???, ???', s)
+        self.assertFalse(p.is_guessed(0, 3))
+        self.assertTrue(p.is_guessed(0, 2))
+        self.assertTrue(p.is_guessed(1, 5))
+        self.assertTrue(p.is_guessed(2, 5))
+        self.assertTrue(p.is_guessed(4, 11))
+
+        s = p.print_public_view_of_the_player()
+        self.assertEqual('Player 0: W02, B05, W05, ???, B11', s)
+
+    def test_is_guessed_count(self):
+        p = Player(0)
+        p.add_card(Card('white', 10))
+        p.add_card(Card('black', 5))
+        p.add_card(Card('white', 5))
+        self.assertAlmostEqual(p.is_guessed_right_rate, 0)
+        self.assertFalse(p.is_guessed(0, 3))
+        self.assertFalse(p.is_guessed(0, 2))
+        self.assertTrue(p.is_guessed(0, 5))
+        self.assertEqual(p.is_guessed_count, 3)
+        self.assertEqual(p.is_guessed_right, 1)
+        self.assertAlmostEqual(p.is_guessed_right_rate, 1 / 3)
+
+    def test_guess_other_rate(self):
+        p = Player(0)
+        p.add_card(Card('white', 5))
+
+        q = Player(1)
+        self.assertAlmostEqual(p.guess_other_right_rate, 0)
+        q.guess_next(0, [], [[], []])
+        self.assertEqual(q.guess_other_count, 1)
+        self.assertAlmostEqual(q.guess_other_right_rate, 0)
+        q.guess_all([], [[], []])
+        q.guess_other_right()
+        self.assertEqual(q.guess_other_count, 2)
+        self.assertEqual(q.guess_right_count, 1)
+        self.assertAlmostEqual(q.guess_other_right_rate, 0.5)
