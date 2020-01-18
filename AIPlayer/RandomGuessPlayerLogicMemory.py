@@ -4,6 +4,19 @@ from GameModule.AIPlayer.Player import Player
 
 
 class RandomGuessPlayerLogicMemory(Player):
+    """
+    Parrot
+
+    it has basic memory and logic, memory means if a card is guessed wrong on 1, she would not guesses again
+    the card is 1 again. Logic means it only consider public view and holding card, if two One cards are published
+    she would not guess 1 again. If one 1 is published and she holds 1, (no more 1), she would not guess 1. Also,
+    if she want to guess [?, 2], she knows ? is smaller than 2, and would not guess 3.
+
+    She would first uniformly randomly pick an agent can be guessed, then randomly pick an index to guess, then randomly
+    choose card from available candidate cards.
+
+    """
+
     def guess_next_implementation(self, next_player_id, public_view_list, guess_history):
         each_player_guess_history = guess_history[0]
         public_card_guess_history = guess_history[1]

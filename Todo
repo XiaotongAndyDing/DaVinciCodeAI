@@ -1,0 +1,3 @@
+1. Bayesian/ Nash AI
+2. Human Agent
+3. Bug about print_to_screen, because guess_all calls guess_next, resulting printing twice

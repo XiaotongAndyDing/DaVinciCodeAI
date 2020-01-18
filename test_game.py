@@ -1,3 +1,4 @@
+import unittest
 from unittest import TestCase
 
 from GameModule.AIPlayer.RandomGuessPlayerLogicMemory import RandomGuessPlayerLogicMemory
@@ -31,6 +32,7 @@ class TestGame(TestCase):
 
         """4 players 1000 games about 5 s"""
 
+    @unittest.skip("has been tested in Battle.py")
     def test_run_two_kinds_players(self):
         result = {0: 0, 1: 0, 2: 0, 3: 0}
         is_guessed_count = {0: 0, 1: 0, 2: 0, 3: 0}
@@ -67,6 +69,7 @@ class TestGame(TestCase):
               round(is_guessed_right[3] / is_guessed_count[3], round_digit), '\t\t',
               round(guess_right_count[3] / guess_other_count[3], round_digit))
 
+    @unittest.skip("has been tested in Battle.py")
     def test_how_order_influence_win_rates(self):
         result = {0: 0, 1: 0, 2: 0, 3: 0}
         is_guessed_count = {0: 0, 1: 0, 2: 0, 3: 0}

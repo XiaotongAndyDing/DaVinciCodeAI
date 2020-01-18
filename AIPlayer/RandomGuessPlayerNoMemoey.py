@@ -4,6 +4,16 @@ from GameModule.AIPlayer.Player import Player
 
 
 class RandomGuessPlayerNoMemory(Player):
+    """
+    Golden Fish
+
+    It has no memory and logic, just for testing.
+
+    She would first uniformly randomly pick an agent can be guessed, then randomly pick an index to guess, then randomly
+    choose card.
+
+    """
+
     def guess_next_implementation(self, next_player_id, public_view_list, guess_history):
         card_index_guessed = random.choice(
             self._other_player_available_position_to_be_guessed(next_player_id, public_view_list))

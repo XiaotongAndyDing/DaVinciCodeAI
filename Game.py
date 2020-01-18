@@ -77,6 +77,7 @@ class Game:
         raise Exception('Max Turns')
 
     def _guess_all_players_multi_turns(self, player):
+        """as long as you are always correct, you can continuously guess next card until you wrong"""
         if self._check_game_finish():
             return
         self._update_public_view()
@@ -86,9 +87,9 @@ class Game:
         player_index_guess, card_index, number = player.guess_all(self.public_view_list,
                                                                   [self.each_player_guess_history,
                                                                    self.public_card_guess_history])
-        guess_result_met = self.player_list[player_index_guess].is_guessed(card_index, number)
-        if guess_result_met:
+        if self.player_list[player_index_guess].is_guessed(card_index, number):
             player.guess_other_right()
+            """if guess right, we should record it for data analysis"""
             self._guess_all_players_multi_turns(player)
         else:
             return
